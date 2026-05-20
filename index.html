@@ -66,9 +66,7 @@
 
     textarea::placeholder { color: rgba(0,0,0,0.35); }
 
-    .bottom-row {
-      margin-top: 20px;
-    }
+    .bottom-row { margin-top: 20px; }
 
     .send-btn {
       font-size: 15px;
@@ -101,7 +99,6 @@
       letter-spacing: -0.03em;
       color: #000;
       line-height: 1;
-      text-align: center;
     }
 
     .sent-spacer { flex: 1; }
@@ -138,11 +135,8 @@
   </div>
 
   <script>
-    // ─────────────────────────────────────────────
-    // Supabase 설정 — 아래 두 줄만 본인 값으로 교체하세요
     const SUPABASE_URL = 'https://myjwnxqtlketmpfyndqd.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15andueHF0bGtldG1wZnluZHFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNzQ5MjIsImV4cCI6MjA5NDg1MDkyMn0.DpeE0T8vhi3g5hmBcndxXpcrEPg_a-ldeUTbFLNSZCU';
-    // ─────────────────────────────────────────────
 
     const btn = document.getElementById('send-btn');
     const msgEl = document.getElementById('msg');
@@ -151,29 +145,4 @@
     btn.addEventListener('click', send);
 
     async function send() {
-      const msg = msgEl.value.trim();
-      if (!msg) return;
-      btn.disabled = true;
-      noteEl.textContent = '';
-      try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/messages`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ message: msg }),
-        });
-        if (!res.ok) throw new Error();
-        document.getElementById('app-view').style.display = 'none';
-        document.getElementById('sent-view').style.display = 'flex';
-      } catch {
-        noteEl.style.color = 'rgba(0,0,0,0.6)';
-        noteEl.textContent = 'something went wrong.';
-        btn.disabled = false;
-      }
-    }
-  </script>
-</body>
-</html>
+      const msg = msgEl.value.tr

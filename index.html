@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,7 +48,7 @@
       width: 100%;
     }
 
-    textarea {
+    input[type="text"] {
       display: block;
       width: 100%;
       font-size: 15px;
@@ -57,15 +58,12 @@
       border-bottom: 1px solid rgba(0,0,0,0.15);
       background: transparent;
       outline: none;
-      resize: none;
       color: #000;
       padding: 0 0 5px;
-      height: 26px;
-      overflow: hidden;
       -webkit-appearance: none;
     }
 
-    textarea::placeholder { color: rgba(0,0,0,0.35); }
+    input[type="text"]::placeholder { color: rgba(0,0,0,0.35); }
 
     .bottom-row { margin-top: 20px; }
 
@@ -88,27 +86,56 @@
     .send-btn:active { opacity: 0.6; }
     .send-btn:disabled { opacity: 0.3; }
 
-    #sent-view {
+    /* 팝업 */
+    .popup-overlay {
       display: none;
-      flex-direction: column;
-      flex: 1;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
     }
 
-    .sent-title {
-      font-size: clamp(64px, 18vw, 96px);
-      font-weight: 900;
-      letter-spacing: -0.03em;
+    .popup-overlay.show {
+      display: flex;
+    }
+
+    .popup {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px 28px;
+      text-align: center;
+      width: calc(100% - 64px);
+      max-width: 280px;
+    }
+
+    .popup-title {
+      font-size: 20px;
+      font-weight: 700;
       color: #000;
-      line-height: 1;
+      margin-bottom: 6px;
     }
 
-    .sent-spacer { flex: 1; }
-
-    .sent-note {
-      font-size: 15px;
-      color: rgba(0,0,0,0.55);
-      line-height: 1.6;
+    .popup-sub {
+      font-size: 14px;
+      color: rgba(0,0,0,0.45);
+      margin-bottom: 24px;
     }
+
+    .popup-btn {
+      font-size: 14px;
+      font-family: inherit;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 0;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .popup-btn:active { opacity: 0.7; }
   </style>
 </head>
 <body>
@@ -119,7 +146,7 @@
     <div class="spacer"></div>
     <div class="bottom">
       <div class="input-wrap">
-        <textarea id="msg" placeholder="a word for me..." maxlength="300"></textarea>
+        <input type="text" id="msg" placeholder="a word for me..." maxlength="300" />
       </div>
       <div class="bottom-row">
         <button class="send-btn" id="send-btn">send</button>
@@ -129,10 +156,13 @@
     </div>
   </div>
 
-  <div id="sent-view">
-    <div class="sent-title">A word.</div>
-    <div class="sent-spacer"></div>
-    <div class="sent-note">sent.<br>thank you :)</div>
+  <!-- 팝업 -->
+  <div class="popup-overlay" id="popup">
+    <div class="popup">
+      <div class="popup-title">sent.</div>
+      <div class="popup-sub">thank you :)</div>
+      <button class="popup-btn" onclick="closePopup()">ok</button>
+    </div>
   </div>
 
   <script>
@@ -144,6 +174,9 @@
     const noteEl = document.getElementById('note-area');
 
     btn.addEventListener('click', send);
+    msgEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter') e.preventDefault();
+    });
 
     async function send() {
       const msg = msgEl.value.trim();
@@ -161,13 +194,18 @@
           body: JSON.stringify({ message: msg }),
         });
         if (!res.ok) throw new Error();
-        document.getElementById('app-view').style.display = 'none';
-        document.getElementById('sent-view').style.display = 'flex';
+        msgEl.value = '';
+        document.getElementById('popup').classList.add('show');
       } catch {
         noteEl.style.color = 'rgba(0,0,0,0.6)';
         noteEl.textContent = 'something went wrong.';
         btn.disabled = false;
       }
+    }
+
+    function closePopup() {
+      document.getElementById('popup').classList.remove('show');
+      btn.disabled = false;
     }
   </script>
 </body>

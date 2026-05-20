@@ -146,4 +146,29 @@
     btn.addEventListener('click', send);
 
     async function send() {
-      const msg = msgEl.value.tr
+      const msg = msgEl.value.trim();
+      if (!msg) return;
+      btn.disabled = true;
+      noteEl.textContent = '';
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/message`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ message: msg }),
+        });
+        if (!res.ok) throw new Error();
+        document.getElementById('app-view').style.display = 'none';
+        document.getElementById('sent-view').style.display = 'flex';
+      } catch {
+        noteEl.style.color = 'rgba(0,0,0,0.6)';
+        noteEl.textContent = 'something went wrong.';
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
